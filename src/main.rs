@@ -48,6 +48,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let msisdns = api::get_active_msisdns().await.expect("fetch numbers");
 
     for modem in modems.iter() {
+        if msisdns.len() == 0 {
+            eprintln!("cannot find available sms receiver");
+            continue;
+        }
+
         let reciver_msisdn = get_random_msisdn(&msisdns).unwrap();
 
         let Some(icc_id) = at_command::get_iccid(&modem.port).await else {
